@@ -3,331 +3,402 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MLQI — MyLeague Quality Index — Arman Shalik</title>
+<title>MLQI // Signal Processing Unit — ATM MathLab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#FAF6EC;
-    --panel:#FFFEFA;
-    --panel-2:#FCF9F0;
-    --line:#E7DFC9;
-    --line-soft:#F0EADA;
-    --ink:#232320;
-    --ink-soft:#6B6A62;
-    --ink-faint:#A6A395;
-    --gold:#AD8324;
-    --gold-soft:#E8D9AE;
-    --gold-tint:#F5EDD6;
-    --teal:#2E7267;
-    --teal-tint:#E2EFEC;
-    --rose:#B8654B;
-    --rose-tint:#F5E4DD;
-    --disp:'Fraunces', serif;
-    --body:'Inter', sans-serif;
-    --shadow: 0 1px 2px rgba(40,32,10,.04), 0 10px 28px -14px rgba(40,32,10,.18);
+    --bg:#0a0f1a;
+    --bg-grid: rgba(89,199,232,0.05);
+    --panel:#0f1826;
+    --panel-2:#141f31;
+    --line:#223349;
+    --line-bright:#2f4763;
+    --cyan:#59c7e8;
+    --cyan-dim:#2d5266;
+    --copper:#e8935a;
+    --copper-dim:#6b4630;
+    --amber:#f2c14e;
+    --good:#6fcf97;
+    --bad:#e8735a;
+    --text:#e7eef5;
+    --text-dim:#7f93a8;
+    --text-faint:#4c5f74;
+    --mono: 'JetBrains Mono', monospace;
+    --disp: 'Space Grotesk', sans-serif;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
     margin:0;
-    background:var(--paper);
-    color:var(--ink);
-    font-family:var(--body);
+    min-height:100vh;
+    background:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px) 0 0/38px 38px,
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px) 0 0/38px 38px,
+      radial-gradient(1200px 700px at 8% -8%, #122036 0%, transparent 55%),
+      radial-gradient(1000px 600px at 105% 15%, #17223a 0%, transparent 50%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--disp);
     -webkit-font-smoothing:antialiased;
-    position:relative;
-    overflow-x:hidden;
   }
-  ::selection{background:var(--gold-soft);}
+  ::selection{background:var(--cyan); color:#04121a;}
 
-  /* ---------- AMBIENT MOVING GRAPHICS ---------- */
-  .ambient{
-    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
-  }
-  .glyph{
-    position:absolute; font-family:var(--disp); font-style:italic; color:var(--gold);
-    opacity:.09; animation:drift ease-in-out infinite;
-    user-select:none;
-  }
-  @keyframes drift{
-    0%{ transform:translate(0,0) rotate(0deg); }
-    50%{ transform:translate(18px,-26px) rotate(6deg); }
-    100%{ transform:translate(0,0) rotate(0deg); }
-  }
-  .glow{
-    position:absolute; width:520px; height:520px; border-radius:50%;
-    background:radial-gradient(circle, rgba(173,131,36,0.10), transparent 70%);
-    filter:blur(10px);
-    animation:float2 26s ease-in-out infinite;
-  }
-  @keyframes float2{
-    0%,100%{ transform:translate(0,0) scale(1); }
-    50%{ transform:translate(40px,60px) scale(1.08); }
-  }
-  @media (max-width:680px){ .glyph{display:none;} }
+  a{color:var(--cyan);}
 
-  a{color:var(--gold);}
-
-  /* ---------- TOP NAV ---------- */
-  .topbar{
+  /* ---------- BEZEL / TOP BAR ---------- */
+  .bezel{
     position:sticky; top:0; z-index:40;
-    background:rgba(250,246,236,0.88);
-    backdrop-filter:blur(8px);
+    background:linear-gradient(180deg, #0c1420f2, #0c1420e6);
+    backdrop-filter:blur(6px);
     border-bottom:1px solid var(--line);
+    padding:14px 22px;
   }
-  .topbar-inner{
-    max-width:1180px; margin:0 auto; padding:18px 24px;
-    display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
+  .bezel-inner{
+    max-width:1240px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    flex-wrap:wrap;
   }
-  .brandmark{ display:flex; flex-direction:column; gap:2px; }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .led{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--good);
+    box-shadow:0 0 8px 2px var(--good);
+    animation:pulse 2.4s ease-in-out infinite;
+    flex:none;
+  }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.4;} }
+  .brand-text{line-height:1.15;}
   .brand-eyebrow{
-    font-family:var(--body); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--gold); font-weight:600;
+    font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:var(--text-dim);
+    text-transform:uppercase;
   }
-  .brand-word{
-    font-family:var(--disp); font-weight:700; font-size:22px; letter-spacing:.01em; color:var(--ink);
+  .brand-title{
+    font-family:var(--mono); font-weight:700; font-size:15px; color:var(--text);
+    letter-spacing:.03em;
   }
+  .brand-title span{color:var(--cyan);}
 
-  .pillnav{
-    display:flex; gap:4px; background:var(--panel); border:1px solid var(--line);
-    padding:4px; border-radius:999px; box-shadow:var(--shadow);
+  .tabs{
+    display:flex; gap:6px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:4px;
   }
-  .pill{
-    font-family:var(--body); font-weight:600; font-size:13px;
-    background:transparent; border:none; color:var(--ink-soft);
-    padding:9px 20px; border-radius:999px; cursor:pointer; transition:all .2s;
+  .tab-btn{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.06em;
+    text-transform:uppercase;
+    background:transparent; border:none; color:var(--text-dim);
+    padding:9px 16px; border-radius:2px; cursor:pointer;
+    transition:all .15s;
   }
-  .pill.active{ background:var(--ink); color:var(--paper); }
-  .pill:not(.active):hover{ color:var(--ink); }
+  .tab-btn.active{ background:var(--cyan); color:#04121a; font-weight:700;}
+  .tab-btn:not(.active):hover{ color:var(--text); background:var(--panel-2); }
 
   /* ---------- LAYOUT ---------- */
-  .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:44px 24px 100px; }
+  .wrap{max-width:1240px; margin:0 auto; padding:34px 22px 100px;}
   .view{display:none;}
-  .view.active{display:block; animation:rise .35s ease;}
-  @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .view.active{display:block; animation:fadeIn .25s ease;}
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 
-  .hero{ margin-bottom:36px; max-width:640px; }
-  .hero-eyebrow{
-    font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);
-    font-weight:600; margin-bottom:10px;
+  .hero{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    gap:24px; margin-bottom:30px; flex-wrap:wrap;
   }
   .hero h1{
-    font-family:var(--disp); font-weight:600; font-size:40px; margin:0 0 12px; letter-spacing:-.01em; line-height:1.1;
+    font-size:34px; margin:0 0 6px; font-weight:700; letter-spacing:-.01em;
   }
-  .hero h1 em{ color:var(--gold); font-style:italic; }
-  .hero p{ margin:0; color:var(--ink-soft); font-size:15px; line-height:1.65; }
+  .hero h1 em{ color:var(--cyan); font-style:normal; }
+  .hero p{
+    margin:0; color:var(--text-dim); font-size:14px; max-width:480px; line-height:1.6;
+  }
+  .hero-meta{
+    font-family:var(--mono); font-size:11px; color:var(--text-faint);
+    text-align:right; line-height:1.8; letter-spacing:.04em;
+  }
+  .hero-meta b{color:var(--copper);}
 
   /* ---------- CALC GRID ---------- */
-  .calc-grid{ display:grid; grid-template-columns:1.25fr 1fr; gap:26px; align-items:start; }
+  .calc-grid{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap:22px;
+    align-items:start;
+  }
   @media (max-width:980px){ .calc-grid{grid-template-columns:1fr;} }
 
   .module{
-    background:var(--panel); border:1px solid var(--line); border-radius:16px;
-    padding:26px 26px 24px; margin-bottom:20px; box-shadow:var(--shadow); position:relative;
+    position:relative;
+    background:linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:22px 22px 20px;
+    margin-bottom:20px;
   }
-  .module::before{
-    content:""; position:absolute; top:0; left:26px; right:26px; height:3px;
-    background:linear-gradient(90deg, var(--gold), transparent); border-radius:0 0 3px 3px;
+  .module::before, .module::after,
+  .module .cbr::before, .module .cbr::after{ content:""; }
+  .corner{
+    position:absolute; width:12px; height:12px;
+    border-color:var(--line-bright); border-style:solid; border-width:0;
+    opacity:.9;
+  }
+  .corner.tl{top:-1px; left:-1px; border-top-width:2px; border-left-width:2px;}
+  .corner.tr{top:-1px; right:-1px; border-top-width:2px; border-right-width:2px;}
+  .corner.bl{bottom:-1px; left:-1px; border-bottom-width:2px; border-left-width:2px;}
+  .corner.br{bottom:-1px; right:-1px; border-bottom-width:2px; border-right-width:2px;}
+
+  .module-head{
+    display:flex; align-items:center; gap:10px; margin-bottom:16px;
+  }
+  .module-tag{
+    font-family:var(--mono); font-size:10px; color:var(--copper);
+    border:1px solid var(--copper-dim); padding:3px 7px; border-radius:2px;
+    letter-spacing:.08em;
   }
   .module-title{
-    font-family:var(--disp); font-weight:600; font-size:19px; margin-bottom:4px; color:var(--ink);
+    font-family:var(--mono); font-weight:600; font-size:13px;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--text);
   }
-  .module-note{ font-size:13px; color:var(--ink-soft); margin:0 0 18px; line-height:1.55; }
+  .module-note{
+    font-size:12.5px; color:var(--text-dim); margin:-8px 0 16px; line-height:1.55;
+  }
 
-  .field-row{ display:flex; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
-  .field{ flex:1; min-width:150px; }
+  .field-row{display:flex; gap:14px; margin-bottom:14px; flex-wrap:wrap;}
+  .field{flex:1; min-width:150px;}
   .field label{
     display:flex; justify-content:space-between; align-items:baseline;
-    font-size:12.5px; font-weight:600; color:var(--ink); margin-bottom:8px;
+    font-family:var(--mono); font-size:10.5px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:.05em; margin-bottom:7px;
   }
-  .field label .max{ color:var(--ink-faint); font-weight:400; }
+  .field label .max{color:var(--text-faint); text-transform:none; letter-spacing:0;}
   input[type=number]{
-    width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--ink);
-    padding:11px 13px; border-radius:10px; font-family:var(--body); font-size:15px; font-weight:600;
-    outline:none; transition:border-color .15s, box-shadow .15s;
+    width:100%;
+    background:#060b12;
+    border:1px solid var(--line);
+    color:var(--cyan);
+    padding:10px 11px;
+    border-radius:2px;
+    font-family:var(--mono); font-size:14px; font-weight:600;
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
   }
-  input[type=number]:focus{ border-color:var(--gold); box-shadow:0 0 0 4px var(--gold-tint); }
+  input[type=number]:focus{ border-color:var(--cyan); box-shadow:0 0 0 3px rgba(89,199,232,0.12); }
 
   .check-row{
-    display:flex; align-items:center; gap:10px; background:var(--panel-2);
-    border:1px solid var(--line); padding:12px 14px; border-radius:10px;
+    display:flex; align-items:center; gap:10px;
+    background:#060b12; border:1px solid var(--line);
+    padding:11px 13px; border-radius:2px;
   }
-  .check-row input{ accent-color:var(--gold); width:17px; height:17px; }
-  .check-row span{ font-size:13.5px; color:var(--ink); font-weight:500; }
+  .check-row input{accent-color:var(--copper); width:16px; height:16px;}
+  .check-row span{font-size:13px; color:var(--text);}
 
   .qtotal{
-    margin-top:4px; font-size:12.5px; color:var(--ink-soft); display:flex; justify-content:space-between;
-    border-top:1px dashed var(--line); padding-top:12px;
+    margin-top:6px; font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+    display:flex; justify-content:space-between; border-top:1px dashed var(--line); padding-top:12px;
   }
-  .qtotal b{ color:var(--gold); font-family:var(--disp); font-size:15px; }
+  .qtotal b{color:var(--cyan); font-size:13px;}
 
   /* ---------- READOUT ---------- */
-  .readout{ position:sticky; top:96px; }
-  .score-card{
-    background:linear-gradient(180deg, #FFFEFB, var(--panel));
-    border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow);
-    padding:34px 28px 28px; text-align:center; position:relative; overflow:hidden;
+  .readout{
+    position:sticky; top:96px;
   }
-  .score-label{
-    font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint);
-    font-weight:600; margin-bottom:14px;
-  }
-  .score-num{
-    font-family:var(--disp); font-weight:700; font-size:68px; color:var(--gold); line-height:1;
-    letter-spacing:-.01em;
-  }
-  .score-num span{ font-size:22px; color:var(--ink-faint); font-weight:500; font-family:var(--body); }
-
-  .tier-pill{
-    display:inline-block; margin-top:14px; padding:6px 16px; border-radius:999px;
-    font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-  }
-
-  .quote-block{
-    margin-top:22px; padding:18px 6px 4px; border-top:1px solid var(--line-soft);
+  .screen{
+    background:radial-gradient(120% 140% at 50% -10%, #101d2c, #060b12 70%);
+    border:1px solid var(--line-bright);
+    border-radius:4px;
+    padding:28px 24px 22px;
+    text-align:center;
     position:relative;
+    overflow:hidden;
   }
-  .quote-text{
-    font-family:var(--disp); font-style:italic; font-size:16px; color:var(--ink); line-height:1.55;
-    min-height:50px; transition:opacity .25s ease;
+  .screen::before{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(0deg, rgba(89,199,232,0.035) 0px, rgba(89,199,232,0.035) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
   }
-  .quote-refresh{
-    margin-top:10px; background:none; border:none; color:var(--ink-faint); font-size:11.5px;
-    cursor:pointer; font-family:var(--body); font-weight:600; letter-spacing:.03em;
-    display:inline-flex; align-items:center; gap:5px;
+  .screen-label{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--text-dim); margin-bottom:10px;
   }
-  .quote-refresh:hover{ color:var(--gold); }
+  .screen-num{
+    font-family:var(--mono); font-weight:700; font-size:64px; color:var(--cyan);
+    text-shadow:0 0 18px rgba(89,199,232,.55);
+    line-height:1;
+  }
+  .screen-num span{font-size:22px; color:var(--text-faint); font-weight:500;}
+  .screen-mode{
+    margin-top:12px; font-family:var(--mono); font-size:11px; color:var(--copper);
+    letter-spacing:.04em;
+  }
 
-  .signal-list{ margin-top:24px; text-align:left; }
-  .signal-item{ margin-bottom:12px; }
-  .signal-top{ display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:5px; }
-  .signal-top .n{ color:var(--ink-soft); font-weight:600; }
-  .signal-top .v{ color:var(--gold); font-weight:700; }
-  .signal-track{ height:6px; background:var(--panel-2); border-radius:4px; overflow:hidden; border:1px solid var(--line-soft); }
-  .signal-fill{ height:100%; background:linear-gradient(90deg, var(--gold-soft), var(--gold)); border-radius:4px; transition:width .3s ease; }
-
-  .share-row{ display:flex; gap:10px; margin-top:24px; }
-  .btn{
-    flex:1; font-family:var(--body); font-weight:600; font-size:13px; padding:12px 14px;
-    border-radius:10px; border:1px solid var(--line); cursor:pointer; transition:all .15s;
-    display:flex; align-items:center; justify-content:center; gap:7px;
+  .signal-row{
+    display:flex; align-items:flex-end; gap:8px;
+    margin:22px 2px 4px; padding-top:10px;
   }
-  .btn-primary{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
-  .btn-primary:hover{ background:#3a3a34; }
-  .btn-secondary{ background:var(--panel); color:var(--ink); }
-  .btn-secondary:hover{ border-color:var(--gold); color:var(--gold); }
+  .node{
+    flex:1; text-align:center; position:relative;
+  }
+  .node-bar-track{
+    height:70px; width:100%; background:#060b12; border:1px solid var(--line);
+    border-radius:2px; position:relative; overflow:hidden;
+  }
+  .node-bar-fill{
+    position:absolute; bottom:0; left:0; width:100%;
+    background:linear-gradient(180deg, var(--cyan), var(--cyan-dim));
+    transition:height .25s ease;
+  }
+  .node-label{
+    font-family:var(--mono); font-size:8.5px; color:var(--text-dim);
+    margin-top:6px; letter-spacing:.04em; text-transform:uppercase;
+  }
+  .node-val{
+    font-family:var(--mono); font-size:10.5px; color:var(--text); font-weight:600;
+  }
+  .node-line{
+    position:absolute; top:-11px; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent, var(--line-bright), transparent);
+  }
+
+  .compare-box{
+    margin-top:20px; padding-top:16px; border-top:1px dashed var(--line);
+    font-family:var(--mono); font-size:12px;
+  }
+  .compare-line{
+    display:flex; justify-content:space-between; padding:6px 0; color:var(--text-dim);
+  }
+  .compare-line b{ color:var(--text); }
+  .diverge-note{
+    margin-top:14px; font-size:11.5px; color:var(--text-dim); line-height:1.6;
+    border-left:2px solid var(--copper); padding-left:10px;
+  }
 
   /* ---------- FLOATING HELP ---------- */
   .help-fab{
-    position:fixed; right:26px; bottom:26px; z-index:50;
-    width:56px; height:56px; border-radius:50%;
-    background:var(--gold); color:#fff; border:none;
-    font-family:var(--disp); font-weight:700; font-size:20px; cursor:pointer;
-    box-shadow:0 8px 24px -6px rgba(173,131,36,.55);
-    animation:pulseFab 3s ease-in-out infinite;
+    position:fixed; right:22px; bottom:22px; z-index:50;
+    width:54px; height:54px; border-radius:50%;
+    background:var(--copper); color:#1a0f06;
+    border:none; font-family:var(--mono); font-weight:700; font-size:18px;
+    cursor:pointer; box-shadow:0 0 0 0 rgba(232,147,90,.5), 0 6px 20px rgba(0,0,0,.4);
+    animation:ring 2.6s ease-in-out infinite;
   }
-  @keyframes pulseFab{
-    0%,100%{ box-shadow:0 8px 24px -6px rgba(173,131,36,.55); transform:scale(1); }
-    50%{ box-shadow:0 8px 30px -4px rgba(173,131,36,.75); transform:scale(1.045); }
+  @keyframes ring{
+    0%{ box-shadow:0 0 0 0 rgba(232,147,90,.45), 0 6px 20px rgba(0,0,0,.4); }
+    70%{ box-shadow:0 0 0 14px rgba(232,147,90,0), 0 6px 20px rgba(0,0,0,.4); }
+    100%{ box-shadow:0 0 0 0 rgba(232,147,90,0), 0 6px 20px rgba(0,0,0,.4); }
   }
   .help-fab-label{
-    position:fixed; right:90px; bottom:42px; z-index:50; font-size:12px; font-weight:600;
-    background:var(--panel); border:1px solid var(--line); padding:8px 12px; border-radius:10px;
-    box-shadow:var(--shadow); color:var(--ink-soft);
+    position:fixed; right:84px; bottom:38px; z-index:50;
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    background:var(--panel); border:1px solid var(--line); padding:7px 10px; border-radius:3px;
   }
   @media (max-width:680px){ .help-fab-label{display:none;} }
 
   /* ---------- GUIDE VIEW ---------- */
-  .rev-block{ margin-bottom:38px; }
-  .rev-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:18px; }
-  .rev-num{ font-family:var(--disp); color:var(--gold); font-weight:700; font-size:15px; font-style:italic; }
-  .rev-title{ font-family:var(--disp); font-size:24px; font-weight:600; }
-
-  .glance-table{ width:100%; border-collapse:collapse; margin-bottom:8px; font-size:13.5px; }
-  .glance-table th{
-    font-size:11px; text-transform:uppercase; letter-spacing:.05em; font-weight:700;
-    color:var(--ink-faint); text-align:left; padding:10px 12px; border-bottom:1px solid var(--line);
+  .rev-block{ margin-bottom:34px; }
+  .rev-head{
+    display:flex; align-items:baseline; gap:12px; margin-bottom:16px;
+    border-bottom:1px solid var(--line); padding-bottom:10px;
   }
-  .glance-table td{ padding:13px 12px; border-bottom:1px solid var(--line-soft); color:var(--ink); }
-  .glance-table td.w{ font-family:var(--disp); color:var(--gold); font-weight:700; font-size:15px; }
+  .rev-num{ font-family:var(--mono); color:var(--copper); font-weight:700; font-size:14px; }
+  .rev-title{ font-size:20px; font-weight:700; }
+
+  .glance-table{
+    width:100%; border-collapse:collapse; margin-bottom:6px;
+    font-size:13px;
+  }
+  .glance-table th{
+    font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--text-dim); text-align:left; padding:9px 10px; border-bottom:1px solid var(--line-bright);
+  }
+  .glance-table td{
+    padding:11px 10px; border-bottom:1px solid var(--line); color:var(--text);
+  }
+  .glance-table td.w{ font-family:var(--mono); color:var(--cyan); font-weight:700; }
 
   details.spec{
-    background:var(--panel); border:1px solid var(--line); border-radius:14px;
-    margin-bottom:10px; overflow:hidden; box-shadow:var(--shadow);
+    background:var(--panel); border:1px solid var(--line); border-radius:3px;
+    margin-bottom:10px; overflow:hidden;
   }
+  details.spec[open]{ border-color:var(--line-bright); }
   details.spec summary{
-    cursor:pointer; list-style:none; padding:16px 20px;
+    cursor:pointer; list-style:none; padding:14px 16px;
     display:flex; align-items:center; justify-content:space-between; gap:10px;
-    font-weight:600; font-size:15px;
+    font-weight:600; font-size:14.5px;
   }
-  details.spec summary::-webkit-details-marker{ display:none; }
-  details.spec summary .chev{ color:var(--gold); transition:transform .2s; flex:none; }
+  details.spec summary::-webkit-details-marker{display:none;}
+  details.spec summary .chev{
+    font-family:var(--mono); color:var(--cyan); transition:transform .2s; flex:none;
+  }
   details.spec[open] summary .chev{ transform:rotate(90deg); }
-  details.spec .spec-body{ padding:0 20px 20px; color:var(--ink-soft); font-size:14px; line-height:1.7; }
-  details.spec .spec-body b{ color:var(--ink); }
-  .field-tag{
-    font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
-    color:var(--teal); background:var(--teal-tint); border-radius:6px; padding:3px 8px; margin-right:10px;
+  details.spec .spec-body{
+    padding:0 16px 18px; color:var(--text-dim); font-size:13.5px; line-height:1.65;
+  }
+  .pin{
+    font-family:var(--mono); font-size:11px; color:var(--copper);
+    background:var(--copper-dim); border-radius:2px; padding:2px 6px; margin-right:8px;
   }
 
-  .equation{
-    display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:16px 0 20px;
-    background:var(--panel-2); border:1px solid var(--line); border-radius:14px; padding:18px 20px;
+  .code-block{
+    background:#060b12; border:1px solid var(--line-bright); border-radius:3px;
+    padding:16px 18px; font-family:var(--mono); font-size:13px; color:var(--cyan);
+    line-height:1.8; margin:14px 0 18px; overflow-x:auto; white-space:pre;
   }
-  .equation .lead{ font-family:var(--disp); font-style:italic; font-weight:600; font-size:16px; color:var(--ink); }
-  .equation .term{
-    font-family:var(--disp); font-style:italic; font-size:15px; color:var(--ink);
-    background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:6px 12px;
-  }
-  .equation .plus{ color:var(--gold); font-weight:700; font-family:var(--body); }
-  .equation-label{ font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:2px; }
+  .code-block .op{color:var(--copper);}
+  .code-block .lbl{color:var(--text-dim);}
 
   .notice{
-    display:flex; gap:14px; align-items:flex-start; background:var(--gold-tint);
-    border-radius:14px; padding:16px 18px; margin:18px 0; font-size:13.5px; color:var(--ink-soft); line-height:1.65;
+    display:flex; gap:12px; align-items:flex-start;
+    background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--amber);
+    border-radius:0 3px 3px 0; padding:14px 16px; margin:16px 0; font-size:13px; color:var(--text-dim); line-height:1.6;
   }
-  .notice.warn{ background:var(--rose-tint); }
-  .notice.good{ background:var(--teal-tint); }
-  .notice b{ color:var(--ink); }
-  .notice .tag{ font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--gold); flex:none; padding-top:2px; }
-  .notice.warn .tag{ color:var(--rose); }
-  .notice.good .tag{ color:var(--teal); }
+  .notice.bad{ border-left-color:var(--bad); }
+  .notice.good{ border-left-color:var(--good); }
+  .notice b{ color:var(--text); }
+  .notice .tag{
+    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--amber); flex:none; padding-top:2px;
+  }
+  .notice.bad .tag{color:var(--bad);}
+  .notice.good .tag{color:var(--good);}
 
   .steps{ list-style:none; margin:0; padding:0; counter-reset:step; }
   .steps li{
-    counter-increment:step; position:relative; padding:13px 0 13px 46px; font-size:14.5px; color:var(--ink);
-    border-bottom:1px solid var(--line-soft);
+    counter-increment:step; position:relative; padding:12px 0 12px 42px;
+    border-bottom:1px solid var(--line); font-size:13.5px; color:var(--text);
   }
   .steps li:last-child{ border-bottom:none; }
   .steps li::before{
-    content:counter(step); position:absolute; left:0; top:11px; width:26px; height:26px; border-radius:50%;
-    background:var(--gold-tint); color:var(--gold); font-family:var(--disp); font-weight:700; font-size:13px;
+    content: counter(step);
+    position:absolute; left:0; top:10px;
+    width:24px; height:24px; border-radius:50%;
+    background:var(--panel-2); border:1px solid var(--line-bright);
+    color:var(--cyan); font-family:var(--mono); font-size:11px; font-weight:700;
     display:flex; align-items:center; justify-content:center;
   }
 
   footer{
-    position:relative; z-index:1; max-width:1180px; margin:40px auto 0; padding:22px 24px 0;
-    border-top:1px solid var(--line); color:var(--ink-faint); font-size:12px;
+    max-width:1240px; margin:40px auto 0; padding:20px 22px 0;
+    border-top:1px solid var(--line); color:var(--text-faint);
+    font-family:var(--mono); font-size:11px; letter-spacing:.03em;
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
   }
 </style>
 </head>
 <body>
 
-  <div class="ambient" id="ambient">
-    <div class="glow" style="top:-140px; left:-120px;"></div>
-    <div class="glow" style="bottom:-160px; right:-100px; animation-duration:32s;"></div>
-  </div>
-
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brandmark">
-        <div class="brand-eyebrow">An initiative by Arman Shalik</div>
-        <div class="brand-word">MLQI</div>
+  <div class="bezel">
+    <div class="bezel-inner">
+      <div class="brand">
+        <div class="led"></div>
+        <div class="brand-text">
+          <div class="brand-eyebrow">ATM &middot; MathLab &middot; 2026 A/L</div>
+          <div class="brand-title">MLQI <span>// SIGNAL PROCESSING UNIT</span></div>
+        </div>
       </div>
-      <div class="pillnav">
-        <button class="pill active" data-view="calc">Calculator</button>
-        <button class="pill" data-view="guide">Field Guide</button>
+      <div class="tabs">
+        <button class="tab-btn active" data-view="calc">Calculator</button>
+        <button class="tab-btn" data-view="guide">Field Guide</button>
       </div>
     </div>
   </div>
@@ -338,9 +409,15 @@
     <div class="view active" id="view-calc">
 
       <div class="hero">
-        <div class="hero-eyebrow">MyLeague Quality Index &middot; 2026 A/L</div>
-        <h1>How well did you <em>really</em> study today?</h1>
-        <p>Enter today's readings below. Accuracy and pace carry the most weight — not hours sitting at the table.</p>
+        <div>
+          <h1>MyLeague Quality <em>Index</em></h1>
+          <p>Enter today's readings below. Each module feeds a weighted channel into the output — accuracy and pace carry the most signal, not hours logged.</p>
+        </div>
+        <div class="hero-meta">
+          UNIT: MLQI-2.0<br>
+          MODE: <b id="modeTiny">AUTO</b><br>
+          RANGE: 0–100
+        </div>
       </div>
 
       <div class="calc-grid">
@@ -348,7 +425,11 @@
         <div>
 
           <div class="module">
-            <div class="module-title">Papers</div>
+            <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+            <div class="module-head">
+              <span class="module-tag">MOD.01</span>
+              <span class="module-title">Papers</span>
+            </div>
             <div class="module-note">Log completion as a percentage of the paper, not a tick.</div>
             <div class="field-row">
               <div class="field">
@@ -363,7 +444,11 @@
           </div>
 
           <div class="module">
-            <div class="module-title">Questions</div>
+            <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+            <div class="module-head">
+              <span class="module-tag">MOD.02</span>
+              <span class="module-title">Questions</span>
+            </div>
             <div class="module-note">Fill whichever fields match today's subject(s) — a mixed C.M + Phy/Che day fills both S/SE fields, combined automatically.</div>
             <div class="field-row">
               <div class="field">
@@ -389,7 +474,11 @@
           </div>
 
           <div class="module">
-            <div class="module-title">Accuracy <span style="font-size:12px; color:var(--ink-faint); font-family:var(--body); font-weight:500;">— optional</span></div>
+            <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+            <div class="module-head">
+              <span class="module-tag">MOD.03</span>
+              <span class="module-title">Accuracy — optional</span>
+            </div>
             <div class="module-note">Self-mark against the answer key if practical. Leave blank to run in fallback mode.</div>
             <div class="field-row">
               <div class="field">
@@ -400,7 +489,11 @@
           </div>
 
           <div class="module">
-            <div class="module-title">Time &amp; Resources</div>
+            <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+            <div class="module-head">
+              <span class="module-tag">MOD.04</span>
+              <span class="module-title">Time &amp; Resources</span>
+            </div>
             <div class="field-row">
               <div class="field">
                 <label>Hours studied</label>
@@ -421,21 +514,17 @@
 
         <!-- RIGHT: READOUT -->
         <div class="readout">
-          <div class="score-card" id="scoreCard">
-            <div class="score-label">Today's MLQI</div>
-            <div class="score-num" id="scoreOut">0<span>/100</span></div>
-            <div class="tier-pill" id="tierPill">—</div>
+          <div class="screen">
+            <div class="screen-label">MLQI 2.0 output</div>
+            <div class="screen-num" id="scoreOut">0<span>/100</span></div>
+            <div class="screen-mode" id="modeNote">MODE: FALLBACK — NO ACCURACY LOGGED</div>
 
-            <div class="quote-block">
-              <div class="quote-text" id="quoteText">Fill in today's numbers to see your score and a note made for it.</div>
-              <button class="quote-refresh" id="quoteRefresh">↻ Another note</button>
-            </div>
+            <div class="signal-row" id="bars"></div>
 
-            <div class="signal-list" id="bars"></div>
-
-            <div class="share-row">
-              <button class="btn btn-secondary" id="saveBtn">⬇ Save image</button>
-              <button class="btn btn-primary" id="shareBtn">Share to WhatsApp</button>
+            <div class="compare-box">
+              <div class="compare-line"><span>Legacy MLQI (v1)</span><b id="v1Out">0.0</b></div>
+              <div class="compare-line"><span>MLQI 2.0</span><b id="v2Out">0.0</b></div>
+              <div class="diverge-note">v1 rewards hours logged directly. v2 only credits hours through pace (questions ÷ hours), capped at the expected rate — long hours with little output score low here even if v1 scores it high.</div>
             </div>
           </div>
         </div>
@@ -446,13 +535,15 @@
     <div class="view" id="view-guide">
 
       <div class="hero">
-        <div class="hero-eyebrow">Field Guide</div>
-        <h1>Everything the log <em>asks</em> of you</h1>
-        <p>What each field means, how the score is worked out, and why — written for the student filling it in, not the tutor who built it.</p>
+        <div>
+          <h1>Field <em>Guide</em></h1>
+          <p>Everything you need to fill in the daily log correctly — what each field means, how the score is worked out, and why.</p>
+        </div>
+        <div class="hero-meta">DOC: MLQI-2.0-FG<br>REV: 2026.1</div>
       </div>
 
       <div class="rev-block">
-        <div class="rev-head"><span class="rev-num">01</span><span class="rev-title">At a glance</span></div>
+        <div class="rev-head"><span class="rev-num">// 01</span><span class="rev-title">At a glance</span></div>
         <table class="glance-table">
           <tr><th>Channel</th><th>Weight</th><th>Meaning</th></tr>
           <tr><td>Accuracy</td><td class="w">35%</td><td>Did you get the questions right, not just attempt them?</td></tr>
@@ -464,90 +555,81 @@
         </table>
         <div class="notice">
           <span class="tag">Key idea</span>
-          <div>MLQI asks one question: did today's studying actually <b>produce something</b>? Sitting at the table isn't enough on its own — see Section 03.</div>
+          <div>MLQI 2.0 asks one question: did today's studying actually <b>produce something</b>? Sitting at the table isn't enough on its own — see REV 03.</div>
         </div>
       </div>
 
       <div class="rev-block">
-        <div class="rev-head"><span class="rev-num">02</span><span class="rev-title">Field definitions</span></div>
+        <div class="rev-head"><span class="rev-num">// 02</span><span class="rev-title">Field definitions</span></div>
 
         <details class="spec" open>
-          <summary><span><span class="field-tag">Date</span>Which day this row covers</span><span class="chev">›</span></summary>
+          <summary><span><span class="pin">DATE</span>Which day this row covers</span><span class="chev">▶</span></summary>
           <div class="spec-body">One row per calendar day. Don't fill it in from memory a week later — log it the same night.</div>
         </details>
 
         <details class="spec">
-          <summary><span><span class="field-tag">Subject</span>Subject(s) studied</span><span class="chev">›</span></summary>
-          <div class="spec-body">C.M (Combined Maths), Phy (Physics), Che/ICT (Chemistry/ICT). If you studied more than one subject, note all of them — the questions and hours fields should reflect the <b>combined</b> total for the day, all in the same row.</div>
+          <summary><span><span class="pin">SUBJ</span>Subject(s) studied</span><span class="chev">▶</span></summary>
+          <div class="spec-body">C.M (Combined Maths), Phy (Physics), Che/ICT (Chemistry/ICT). If you studied more than one subject, note all of them — the questions and hours fields below should reflect the <b style="color:var(--text)">combined</b> total for the day, all in the same row.</div>
         </details>
 
         <details class="spec">
-          <summary><span><span class="field-tag">PP / MP</span>Past paper &amp; model paper</span><span class="chev">›</span></summary>
-          <div class="spec-body">Enter the percentage of the paper you completed — not a yes/no. Finished 70% of a past paper? Enter 70, not 100 and not 0. Didn't touch a paper type today? Leave it at 0.</div>
-        </details>
-
-        <details class="spec">
-          <summary><span><span class="field-tag">Questions</span>MCQ, S/SE, E</span><span class="chev">›</span></summary>
+          <summary><span><span class="pin">PP / MP</span>Past paper &amp; model paper</span><span class="chev">▶</span></summary>
           <div class="spec-body">
-            MCQ — attempted, out of 100.<br>
-            C.M days — Short (out of 32) + Structured-Essay (out of 8), combined out of 40.<br>
-            Phy/Che days — SE only, out of 16, automatically scaled to the same 40-point equivalent as the C.M field, so neither subject group is penalised.<br>
-            E — essay questions attempted, out of 20.<br><br>
-            <b>Mixed day?</b> Studied C.M and Chemistry the same day — fill in both S/SE fields; the calculator combines them, capped at the 40-question equivalent.
+            Enter the percentage of the paper you completed — not a yes/no. Finished 70% of a past paper? Enter 70, not 100 and not 0. Didn't touch a paper type today? Leave it at 0.
           </div>
         </details>
 
         <details class="spec">
-          <summary><span><span class="field-tag">Correct</span>Optional, new in 2.0</span><span class="chev">›</span></summary>
-          <div class="spec-body">The number of attempted questions you got right, self-marked against the answer key. Leave blank on days where marking isn't practical — common for S/SE/E. When filled in, it's the single largest factor in your score (35%). When blank, the score is calculated in fallback mode instead — see Section 03.</div>
+          <summary><span><span class="pin">QUES</span>MCQ, S/SE, E</span><span class="chev">▶</span></summary>
+          <div class="spec-body">
+            MCQ — attempted, out of 100.<br>
+            C.M days — Short (out of 32) + Structured-Essay (out of 8), combined out of 40.<br>
+            Phy/Che days — SE only, out of 16. This is automatically scaled to the same 40-point equivalent as the C.M field, so neither subject group is penalised for a different question format.<br>
+            E — essay questions attempted, out of 20.<br><br>
+            <b style="color:var(--text)">Mixed day?</b> Studied C.M and Chemistry the same day — fill in both S/SE fields; the calculator combines them, capped at the 40-question equivalent.
+          </div>
         </details>
 
         <details class="spec">
-          <summary><span><span class="field-tag">Hours</span>Total hours</span><span class="chev">›</span></summary>
+          <summary><span><span class="pin">CORR</span>Correct — optional, new in 2.0</span><span class="chev">▶</span></summary>
+          <div class="spec-body">
+            The number of attempted questions you got right, self-marked against the answer key. Leave blank on days where marking isn't practical — common for S/SE/E. When filled in, it's the single largest factor in your score (35%). When blank, the score is calculated in fallback mode instead — see REV 03.
+          </div>
+        </details>
+
+        <details class="spec">
+          <summary><span><span class="pin">HRS</span>Total hours</span><span class="chev">▶</span></summary>
           <div class="spec-body">
             Total hours actively studied, combined across all subjects.
-            <div class="notice warn" style="margin-top:14px;">
+            <div class="notice bad" style="margin-top:12px;">
               <span class="tag">Watch out</span>
-              <div>Hours on their own earn <b>nothing</b> in MLQI. They only count as the denominator of your pace (questions ÷ hours). Sitting at the table without producing output does not raise your score.</div>
+              <div>Hours on their own earn <b style="color:var(--text)">nothing</b> in MLQI 2.0. They only count as the denominator of your pace (questions ÷ hours). Sitting at the table without producing output does not raise your score.</div>
             </div>
           </div>
         </details>
 
         <details class="spec">
-          <summary><span><span class="field-tag">Resources</span>Pens &amp; sheets</span><span class="chev">›</span></summary>
+          <summary><span><span class="pin">RES</span>Pens &amp; sheets</span><span class="chev">▶</span></summary>
           <div class="spec-body">Pens — 1 if you fully finished a pen that day, 0 if not. Sheets — number of sheets filled, out of a soft cap of 60. Both are minor consistency checks, not something to optimise for.</div>
         </details>
 
         <details class="spec">
-          <summary><span><span class="field-tag">Sign</span>MLQI &amp; Sign</span><span class="chev">›</span></summary>
+          <summary><span><span class="pin">SIGN</span>MLQI &amp; Sign</span><span class="chev">▶</span></summary>
           <div class="spec-body">MLQI is calculated automatically once the row is filled in — use the calculator, don't work it out by hand. Sign confirms the row is an honest record of the day.</div>
         </details>
       </div>
 
       <div class="rev-block">
-        <div class="rev-head"><span class="rev-num">03</span><span class="rev-title">How the score is calculated</span></div>
-        <p style="color:var(--ink-soft); font-size:14.5px; line-height:1.65; margin-top:0;">MLQI runs in one of two modes depending on whether <b style="color:var(--ink)">Correct</b> was logged.</p>
+        <div class="rev-head"><span class="rev-num">// 03</span><span class="rev-title">How the score is calculated</span></div>
+        <p style="color:var(--text-dim); font-size:13.5px; line-height:1.6; margin-top:0;">MLQI 2.0 runs in one of two modes depending on whether <b style="color:var(--text)">Correct</b> was logged.</p>
 
-        <div class="equation-label" style="color:var(--teal)">Full mode — Correct is filled in</div>
-        <div class="equation">
-          <span class="lead">MLQI =</span>
-          <span class="term">0.08 · PP%</span><span class="plus">+</span>
-          <span class="term">0.07 · MP%</span><span class="plus">+</span>
-          <span class="term">0.25 · Questions⁄160</span><span class="plus">+</span>
-          <span class="term">0.35 · Correct⁄Questions</span><span class="plus">+</span>
-          <span class="term">0.20 · Efficiency</span><span class="plus">+</span>
-          <span class="term">0.05 · Resources</span>
-        </div>
+        <div style="font-family:var(--mono); font-size:11px; color:var(--cyan); letter-spacing:.06em; text-transform:uppercase; margin-bottom:4px;">Full mode — Correct is filled in</div>
+        <div class="code-block">MLQI <span class="op">=</span> (0.08 <span class="op">×</span> PP%) <span class="op">+</span> (0.07 <span class="op">×</span> MP%) <span class="op">+</span> (0.25 <span class="op">×</span> Questions/160)
+     <span class="op">+</span> (0.35 <span class="op">×</span> Correct/Questions) <span class="op">+</span> (0.20 <span class="op">×</span> Efficiency) <span class="op">+</span> (0.05 <span class="op">×</span> Resources)</div>
 
-        <div class="equation-label" style="color:var(--gold)">Fallback mode — Correct is left blank</div>
-        <div class="equation">
-          <span class="lead">MLQI =</span>
-          <span class="term">0.10 · PP%</span><span class="plus">+</span>
-          <span class="term">0.08 · MP%</span><span class="plus">+</span>
-          <span class="term">0.40 · Questions⁄160</span><span class="plus">+</span>
-          <span class="term">0.32 · Efficiency</span><span class="plus">+</span>
-          <span class="term">0.10 · Resources</span>
-        </div>
+        <div style="font-family:var(--mono); font-size:11px; color:var(--copper); letter-spacing:.06em; text-transform:uppercase; margin-bottom:4px;">Fallback mode — Correct is left blank</div>
+        <div class="code-block">MLQI <span class="op">=</span> (0.10 <span class="op">×</span> PP%) <span class="op">+</span> (0.08 <span class="op">×</span> MP%) <span class="op">+</span> (0.40 <span class="op">×</span> Questions/160)
+     <span class="op">+</span> (0.32 <span class="op">×</span> Efficiency) <span class="op">+</span> (0.10 <span class="op">×</span> Resources)</div>
 
         <table class="glance-table">
           <tr><th>Term</th><th>How it's worked out</th></tr>
@@ -558,36 +640,36 @@
 
         <div class="notice good">
           <span class="tag">Worked example</span>
-          <div>Full past paper, half a model paper, 120 questions in 10 hours, 90 correct, one pen finished, 40 sheets used → <b>MLQI ≈ 80.7 / 100</b>. Try it in the Calculator tab.</div>
+          <div>Full past paper, half a model paper, 120 questions in 10 hours, 90 correct, one pen finished, 40 sheets used → <b style="color:var(--text)">MLQI 2.0 ≈ 80.7 / 100</b>. Try it in the Calculator tab.</div>
         </div>
       </div>
 
       <div class="rev-block">
-        <div class="rev-head"><span class="rev-num">04</span><span class="rev-title">Why it's weighted this way</span></div>
+        <div class="rev-head"><span class="rev-num">// 04</span><span class="rev-title">Why it's weighted this way</span></div>
         <details class="spec">
-          <summary><span>Accuracy carries the most weight — 35%</span><span class="chev">›</span></summary>
+          <summary><span>Accuracy carries the most weight — 35%</span><span class="chev">▶</span></summary>
           <div class="spec-body">A quality index has to measure quality, not just activity. Attempting 160 questions and getting most of them wrong isn't the same as attempting 160 and understanding them.</div>
         </details>
         <details class="spec">
-          <summary><span>Questions attempted still matters a lot — 25% / 40%</span><span class="chev">›</span></summary>
+          <summary><span>Questions attempted still matters a lot — 25% / 40%</span><span class="chev">▶</span></summary>
           <div class="spec-body">Volume of practice is still the strongest single predictor of exam readiness — you can't get accuracy credit for questions you never attempted.</div>
         </details>
         <details class="spec">
-          <summary><span>Efficiency, not raw hours — 20% / 32%</span><span class="chev">›</span></summary>
-          <div class="spec-body">A student who took 10 hours to do what another does in 4 used to score higher on that term alone. MLQI measures pace instead — questions per hour, against an expected pace of 10/hr, capped at 100%. This directly targets sitting at the desk without doing the work.</div>
+          <summary><span>Efficiency, not raw hours — 20% / 32%</span><span class="chev">▶</span></summary>
+          <div class="spec-body">The original MLQI gave direct credit for hours logged, so a student who took 10 hours to do what another does in 4 scored higher on that term alone. MLQI 2.0 measures pace instead — questions per hour, against an expected pace of 10/hr, capped at 100%. This directly targets sitting at the desk without doing the work.</div>
         </details>
         <details class="spec">
-          <summary><span>Papers use fractional completion, not a flag</span><span class="chev">›</span></summary>
+          <summary><span>Papers use fractional completion, not a flag</span><span class="chev">▶</span></summary>
           <div class="spec-body">Finishing 30% of a paper is credited fairly instead of scoring the same as not starting it at all.</div>
         </details>
         <details class="spec">
-          <summary><span>Resources are small and capped on purpose — 5% / 10%</span><span class="chev">›</span></summary>
+          <summary><span>Resources are small and capped on purpose — 5% / 10%</span><span class="chev">▶</span></summary>
           <div class="spec-body">Pens and sheets are easy to log but easy to inflate — writing bigger or messier burns through both without reflecting more real work. Kept as a light check, not something worth optimising.</div>
         </details>
       </div>
 
       <div class="rev-block">
-        <div class="rev-head"><span class="rev-num">05</span><span class="rev-title">How to fill in your daily log</span></div>
+        <div class="rev-head"><span class="rev-num">// 05</span><span class="rev-title">How to fill in your daily log</span></div>
         <ol class="steps">
           <li>Fill in one row at the end of each day — don't reconstruct it from memory later.</li>
           <li>Combine every subject you studied that day into the same row.</li>
@@ -613,130 +695,13 @@
   <div class="help-fab-label" id="helpFabLabel">Need help filling this in?</div>
 
   <footer>
-    <span>Arman Shalik — MyLeague Quality Index</span>
+    <span>ATM &middot; MathLab — MLQI 2.0</span>
     <span>Static build &middot; no data leaves this page</span>
   </footer>
 
 <script>
-/* ---------- ambient floating math glyphs ---------- */
-(function(){
-  const symbols = ['π','∑','∫','√','∞','θ','Δ','≈','ƒ(x)','∂','×','÷','∇','λ'];
-  const ambient = document.getElementById('ambient');
-  const positions = [
-    {top:'8%',left:'4%'},{top:'18%',left:'88%'},{top:'40%',left:'10%'},
-    {top:'62%',left:'92%'},{top:'78%',left:'6%'},{top:'30%',left:'50%'},
-    {top:'85%',left:'46%'},{top:'52%',left:'70%'},{top:'6%',left:'60%'},
-    {top:'95%',left:'80%'}
-  ];
-  positions.forEach((pos,i)=>{
-    const s = document.createElement('span');
-    s.className = 'glyph';
-    s.textContent = symbols[i % symbols.length];
-    s.style.top = pos.top; s.style.left = pos.left;
-    s.style.fontSize = (28 + (i%4)*10) + 'px';
-    s.style.animationDuration = (16 + (i%6)*3) + 's';
-    s.style.animationDelay = (-(i*2)) + 's';
-    ambient.appendChild(s);
-  });
-})();
-
-/* ---------- quotes ---------- */
-const QUOTES = {
-  5: [
-    "This is what mastery looks like in motion — precise, consistent, relentless.",
-    "You didn't just study today. You compounded an advantage.",
-    "Numbers like this aren't luck. They're the residue of discipline.",
-    "Every question you finished today is a brick in a wall nothing can knock down.",
-    "This is the kind of day future-you will thank you for.",
-    "You're not chasing marks anymore — marks are chasing you."
-  ],
-  4: [
-    "Strong work. The gap between good and great is exactly this kind of day.",
-    "You showed up and it shows. Keep the pace honest.",
-    "This is a rhythm worth protecting — don't let tomorrow break it.",
-    "Solid output. A few more days like this and the exam stops feeling far away.",
-    "You're building real momentum — don't stop to admire it, keep moving.",
-    "This is the quiet, steady kind of progress that actually wins finals."
-  ],
-  3: [
-    "A decent day. Now find the ten minutes that would have made it a great one.",
-    "You're in the middle of the climb — this is where most people quit. Don't.",
-    "Not your best, not your worst. Consistency beats intensity — keep logging.",
-    "Progress doesn't always look dramatic. Today counted anyway.",
-    "You did real work today. Tomorrow, ask a little more of yourself.",
-    "This is a foundation day — unglamorous, but nothing gets built without it."
-  ],
-  2: [
-    "A quiet day. That's fine — just don't let it become a habit.",
-    "You showed up, but you know you had more in you today.",
-    "This score isn't a verdict, it's a starting line for tomorrow.",
-    "Everyone has slower days. The question is what you do with the next one.",
-    "Less output today — use it as data, not discouragement.",
-    "Small effort still counts. Just make sure tomorrow counts for more."
-  ],
-  1: [
-    "A low number today doesn't erase the work you've already put in.",
-    "Rest if you needed it. Just come back to the desk tomorrow.",
-    "This isn't who you are — it's just today. Reset and go again.",
-    "Every A/L student has a day like this. What matters is the next one.",
-    "You don't need a perfect week. You need to not give up on this one.",
-    "Log it honestly, learn from it, and let tomorrow be different."
-  ]
-};
-const TIER_META = {
-  5:{label:'Outstanding', color:'var(--gold)', bg:'var(--gold-tint)'},
-  4:{label:'Strong', color:'var(--teal)', bg:'var(--teal-tint)'},
-  3:{label:'Building', color:'var(--gold)', bg:'var(--gold-tint)'},
-  2:{label:'Needs a push', color:'var(--rose)', bg:'var(--rose-tint)'},
-  1:{label:'Reset & go again', color:'var(--rose)', bg:'var(--rose-tint)'}
-};
-function tierFor(score){
-  if(score >= 90) return 5;
-  if(score >= 75) return 4;
-  if(score >= 55) return 3;
-  if(score >= 35) return 2;
-  return 1;
-}
-let currentTier = null, currentQuoteIdx = 0;
-function setQuote(tier, forceNew){
-  const pool = QUOTES[tier];
-  if(tier !== currentTier || forceNew){
-    currentQuoteIdx = Math.floor(Math.random()*pool.length);
-    currentTier = tier;
-  }
-  const q = document.getElementById('quoteText');
-  q.style.opacity = 0;
-  setTimeout(()=>{ q.textContent = '\u201C' + pool[currentQuoteIdx] + '\u201D'; q.style.opacity = 1; }, 150);
-
-  const meta = TIER_META[tier];
-  const pill = document.getElementById('tierPill');
-  pill.textContent = meta.label;
-  pill.style.color = meta.color;
-  pill.style.background = meta.bg;
-}
-document.getElementById('quoteRefresh').addEventListener('click', ()=>{
-  if(currentTier) setQuote(currentTier, true);
-});
-
-/* ---------- calculator ---------- */
 function num(id){ const v = document.getElementById(id).value; return v === '' ? null : parseFloat(v); }
 function clamp(x,lo,hi){ return Math.max(lo, Math.min(hi, x)); }
-let animFrame = null;
-
-function animateScore(target){
-  const el = document.getElementById('scoreOut');
-  const start = parseFloat(el.textContent) || 0;
-  const t0 = performance.now();
-  const dur = 400;
-  if(animFrame) cancelAnimationFrame(animFrame);
-  function step(t){
-    const p = Math.min(1, (t - t0)/dur);
-    const val = start + (target - start) * (1 - Math.pow(1-p, 3));
-    el.innerHTML = val.toFixed(1) + '<span>/100</span>';
-    if(p < 1) animFrame = requestAnimationFrame(step);
-  }
-  animFrame = requestAnimationFrame(step);
-}
 
 function calc(){
   const pp = clamp((num('pp') ?? 0)/100, 0, 1);
@@ -754,50 +719,62 @@ function calc(){
   const questions = Math.min(160, mcq + sseScaled + e);
   document.getElementById('qCalc').textContent = Math.round(questions);
 
+  const ppBin = pp > 0 ? 1 : 0;
+  const mpBin = mp > 0 ? 1 : 0;
+  const v1 = (0.11*ppBin + 0.09*mpBin + 0.2*clamp(hours/16,0,1) + 0.5*(questions/160) + 0.05*pen + 0.05*clamp(sheets/60,0,1)) * 100;
+
   const volume = questions/160;
   const efficiency = hours > 0 ? clamp((questions/hours)/10, 0, 1) : 0;
   const resources = ((pen) + clamp(sheets/60,0,1)) / 2;
 
-  let comps;
+  let v2, comps, modeText, modeTiny;
   if(correctRaw !== null && questions > 0){
     const accuracy = clamp(correctRaw/questions, 0, 1);
     comps = [
-      {name:'Accuracy', weight:0.35, val:accuracy},
-      {name:'Questions', weight:0.25, val:volume},
-      {name:'Efficiency', weight:0.20, val:efficiency},
-      {name:'Past paper', weight:0.08, val:pp},
-      {name:'Model paper', weight:0.07, val:mp},
-      {name:'Resources', weight:0.05, val:resources},
+      {name:'ACC', full:'Accuracy', weight:0.35, val:accuracy},
+      {name:'VOL', full:'Volume', weight:0.25, val:volume},
+      {name:'EFF', full:'Efficiency', weight:0.20, val:efficiency},
+      {name:'PP', full:'Past Paper', weight:0.08, val:pp},
+      {name:'MP', full:'Model Paper', weight:0.07, val:mp},
+      {name:'RES', full:'Resources', weight:0.05, val:resources},
     ];
+    modeText = 'MODE: FULL — ACCURACY CHANNEL ACTIVE (35%)';
+    modeTiny = 'FULL';
   } else {
     comps = [
-      {name:'Questions', weight:0.40, val:volume},
-      {name:'Efficiency', weight:0.32, val:efficiency},
-      {name:'Past paper', weight:0.10, val:pp},
-      {name:'Model paper', weight:0.08, val:mp},
-      {name:'Resources', weight:0.10, val:resources},
+      {name:'VOL', full:'Volume', weight:0.40, val:volume},
+      {name:'EFF', full:'Efficiency', weight:0.32, val:efficiency},
+      {name:'PP', full:'Past Paper', weight:0.10, val:pp},
+      {name:'MP', full:'Model Paper', weight:0.08, val:mp},
+      {name:'RES', full:'Resources', weight:0.10, val:resources},
     ];
+    modeText = 'MODE: FALLBACK — NO ACCURACY LOGGED';
+    modeTiny = 'FALLBACK';
   }
-  const v2 = comps.reduce((s,c)=> s + c.weight*c.val, 0) * 100;
+  v2 = comps.reduce((s,c)=> s + c.weight*c.val, 0) * 100;
 
-  animateScore(v2);
-  setQuote(tierFor(v2), false);
+  document.getElementById('scoreOut').innerHTML = v2.toFixed(1) + '<span>/100</span>';
+  document.getElementById('modeNote').textContent = modeText;
+  document.getElementById('modeTiny').textContent = modeTiny;
+  document.getElementById('v1Out').textContent = v1.toFixed(1);
+  document.getElementById('v2Out').textContent = v2.toFixed(1);
 
   const barsEl = document.getElementById('bars');
   barsEl.innerHTML = comps.map(c => `
-    <div class="signal-item">
-      <div class="signal-top"><span class="n">${c.name} \u00B7 ${Math.round(c.weight*100)}%</span><span class="v">${Math.round(c.val*100)}%</span></div>
-      <div class="signal-track"><div class="signal-fill" style="width:${clamp(c.val*100,0,100)}%"></div></div>
+    <div class="node">
+      <div class="node-line"></div>
+      <div class="node-bar-track"><div class="node-bar-fill" style="height:${clamp(c.val*100,0,100)}%"></div></div>
+      <div class="node-label">${c.name}</div>
+      <div class="node-val">${Math.round(c.val*100)}%</div>
     </div>
   `).join('');
-
-  return v2;
 }
-let lastScore = calc();
-document.querySelectorAll('input').forEach(el => el.addEventListener('input', ()=>{ lastScore = calc(); }));
 
-/* ---------- tabs ---------- */
-const tabBtns = document.querySelectorAll('.pill');
+document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
+calc();
+
+// tab switching
+const tabBtns = document.querySelectorAll('.tab-btn');
 function showView(name){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
@@ -806,127 +783,6 @@ function showView(name){
 }
 tabBtns.forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
 document.getElementById('helpFab').addEventListener('click', () => showView('guide'));
-
-/* ---------- share / save as image ---------- */
-function roundRect(ctx,x,y,w,h,r){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);
-  ctx.arcTo(x+w,y,x+w,y+h,r);
-  ctx.arcTo(x+w,y+h,x,y+h,r);
-  ctx.arcTo(x,y+h,x,y,r);
-  ctx.arcTo(x,y,x+w,y,r);
-  ctx.closePath();
-}
-function wrapText(ctx, text, x, y, maxWidth, lineHeight){
-  const words = text.split(' ');
-  let line = '', lines = [];
-  for(let n=0;n<words.length;n++){
-    const test = line + words[n] + ' ';
-    if(ctx.measureText(test).width > maxWidth && n > 0){
-      lines.push(line); line = words[n] + ' ';
-    } else { line = test; }
-  }
-  lines.push(line);
-  const startY = y - ((lines.length-1)*lineHeight)/2;
-  lines.forEach((l,i)=> ctx.fillText(l.trim(), x, startY + i*lineHeight));
-}
-
-async function buildShareCanvas(){
-  await document.fonts.ready;
-  const W = 720, H = 960;
-  const canvas = document.createElement('canvas');
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, '#FFFEFB');
-  grad.addColorStop(1, '#FAF6EC');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0,0,W,H);
-
-  ctx.fillStyle = 'rgba(173,131,36,0.08)';
-  ctx.beginPath(); ctx.arc(60,60,180,0,Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(W-60,H-100,220,0,Math.PI*2); ctx.fill();
-
-  ctx.strokeStyle = '#E7DFC9'; ctx.lineWidth = 2;
-  ctx.strokeRect(20,20,W-40,H-40);
-
-  ctx.fillStyle = '#AD8324';
-  ctx.font = '600 16px Inter, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('AN INITIATIVE BY ARMAN SHALIK', W/2, 90);
-
-  ctx.fillStyle = '#232320';
-  ctx.font = '700 44px Fraunces, serif';
-  ctx.fillText('MLQI', W/2, 150);
-  ctx.font = '400 16px Inter, sans-serif';
-  ctx.fillStyle = '#6B6A62';
-  ctx.fillText('MyLeague Quality Index', W/2, 178);
-
-  const score = lastScore;
-  ctx.fillStyle = '#AD8324';
-  ctx.font = '700 150px Fraunces, serif';
-  ctx.fillText(score.toFixed(1), W/2, 400);
-  ctx.font = '500 22px Inter, sans-serif';
-  ctx.fillStyle = '#A6A395';
-  ctx.fillText('out of 100', W/2, 440);
-
-  const tier = tierFor(score);
-  const meta = TIER_META[tier];
-  const colorMap = {'var(--gold)':'#AD8324','var(--teal)':'#2E7267','var(--rose)':'#B8654B'};
-  const pillColor = colorMap[meta.color] || '#AD8324';
-  ctx.font = '700 18px Inter, sans-serif';
-  const label = meta.label.toUpperCase();
-  const pw = ctx.measureText(label).width + 50;
-  ctx.fillStyle = pillColor + '22';
-  roundRect(ctx, W/2 - pw/2, 465, pw, 42, 21); ctx.fill();
-  ctx.fillStyle = pillColor;
-  ctx.fillText(label, W/2, 492);
-
-  ctx.fillStyle = '#232320';
-  ctx.font = 'italic 500 24px Fraunces, serif';
-  const quoteRaw = document.getElementById('quoteText').textContent.replace(/[\u201C\u201D]/g,'');
-  wrapText(ctx, '\u201C' + quoteRaw + '\u201D', W/2, 560, 560, 34);
-
-  ctx.font = '500 14px Inter, sans-serif';
-  ctx.fillStyle = '#A6A395';
-  const d = new Date();
-  ctx.fillText(d.toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'}), W/2, H-60);
-  ctx.fillText('Daily study score \u00B7 Arman Shalik', W/2, H-36);
-
-  return canvas;
-}
-
-document.getElementById('saveBtn').addEventListener('click', async ()=>{
-  const canvas = await buildShareCanvas();
-  canvas.toBlob(blob=>{
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'mlqi-result.png';
-    a.click();
-    URL.revokeObjectURL(url);
-  }, 'image/png');
-});
-
-document.getElementById('shareBtn').addEventListener('click', async ()=>{
-  const canvas = await buildShareCanvas();
-  canvas.toBlob(async blob=>{
-    const file = new File([blob], 'mlqi-result.png', {type:'image/png'});
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      try{
-        await navigator.share({ files:[file], title:'My MLQI result', text:'My MLQI score today, from Arman Shalik\u2019s MLQI system.' });
-        return;
-      }catch(err){ /* user cancelled or failed \u2014 fall through to fallback */ }
-    }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'mlqi-result.png';
-    a.click();
-    URL.revokeObjectURL(url);
-    const text = encodeURIComponent('My MLQI score today: ' + lastScore.toFixed(1) + '/100 \u2014 from Arman Shalik\u2019s MLQI system. (Image saved to downloads \u2014 attach it here.)');
-    window.open('https://wa.me/?text=' + text, '_blank');
-  }, 'image/png');
-});
 </script>
 </body>
 </html>
